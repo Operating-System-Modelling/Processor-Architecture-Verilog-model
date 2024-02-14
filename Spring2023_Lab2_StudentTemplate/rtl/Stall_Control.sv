@@ -56,7 +56,27 @@ module Stall_Control (
         */
 
         //Ashan's change
-        
+        // if (ID_src1_addr_ip != 0 && ID_src2_addr_ip !=0) begin
+        //   if ((EX_instr_opcode_ip == 7'b0000011 && ((EX_reg_dest_ip == ID_src1_addr_ip) ||
+        //   (EX_reg_dest_ip  == ID_src2_addr_ip)))||
+        //   (((WB_reg_dest_ip == ID_src1_addr_ip && LSU_reg_dest_ip != ID_src1_addr_ip) ||
+        //   (WB_reg_dest_ip == ID_src2_addr_ip && LSU_reg != ID_src2_addr_ip))) &&
+        //   (fw_en_ip == 1'b0)) begin
+        //     stall_op = 1'b1;
+        //   end
+        // end
+
+        if (ID_src1_addr_ip != 0 || ID_src2_addr_ip !=0) begin
+          if (
+          (EX_reg_dest_ip == ID_src1_addr_ip)  && (EX_instr_opcode_ip == 7'b0110011) ||
+          (LSU_dest_reg_ip == ID_src1_addr_ip) && (EX_instr_opcode_ip == 7'b0000011)||
+          (WB_reg_dest_ip == ID_src1_addr_ip) && (WB_write_reg_en_ip == 1'b1) ||
+          (EX_reg_dest_ip == ID_src2_addr_ip) && (EX_instr_opcode_ip == 7'b0110011)||
+          (LSU_dest_reg_ip == ID_src2_addr_ip) (EX_instr_opcode_ip == 7'b0000011)||
+          (WB_reg_dest_ip == ID_src2_addr_ip) (WB_write_reg_en_ip == 1'b1)) begin
+            stall_op = 1'b1;
+          end
+        end
         //Ashan's change
 
       end
@@ -72,6 +92,17 @@ module Stall_Control (
         * 2. Stalls when reading and writing from Register File
         * For Register Immedite instructions, what registers are relevant
         */
+        //Ashan's change
+        if (ID_src1_addr_ip != 0 || ID_src2_addr_ip !=0) begin
+          if (
+          (EX_reg_dest_ip == ID_src1_addr_ip)  && (EX_instr_opcode_ip == 7'b0110011) ||
+          (LSU_dest_reg_ip == ID_src1_addr_ip) && (EX_instr_opcode_ip == 7'b0000011)||
+          (WB_reg_dest_ip == ID_src1_addr_ip) && (WB_write_reg_en_ip == 1'b1) )
+          begin
+            stall_op = 1'b1;
+          end
+        end
+        //Ashan's change
 
       end
 
