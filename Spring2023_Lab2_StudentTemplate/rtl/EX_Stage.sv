@@ -73,7 +73,7 @@ module EX_Stage (
   always @(*) begin
     next_PC_addr_valid_op = 0;
     next_PC_addr_op = 0;
-
+//set flush signal - Ashan
     case (pc_mux_ip) 
       ALU_RESULT: begin
         next_PC_addr_valid_op = alu_valid;
@@ -110,8 +110,13 @@ module EX_Stage (
       /**
       * Task 2
       * Based on the Foward A Mux, how do we select the appropriate values? 
+      Use EX select, Mem select result to change  alu_operand a to the result of alu beetwen alu result and fw_wbdata
       *
       */
+      //Ashan's change
+      EX_RESULT_SELECT: alu_operand_a = alu_result;
+      MEM_RESULT_SELECT: alu_operand_a = fw_wb_data;
+      //Ashan's change
       default:  alu_operand_a = alu_operand_a_ip;
     endcase
   end
@@ -122,8 +127,10 @@ module EX_Stage (
       /**
       * Task 2
       * Based on the Foward B Mux, how do we select the appropriate values? 
-      *
+      *do the same for alu_operand b
       */
+      EX_RESULT_SELECT: alu_operand_b = alu_result;
+      MEM_RESULT_SELECT: alu_operand_b = fw_wb_data;
       default: alu_operand_b = alu_operand_b_ip;
     endcase
   end
