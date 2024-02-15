@@ -124,7 +124,7 @@ module EX_Stage (
   // Forward Values for Source Register 2
   always @(*) begin
     case (fb_mux_ip) 
-      /**
+      /**git
       * Task 2
       * Based on the Foward B Mux, how do we select the appropriate values? 
       *do the same for alu_operand b

@@ -29,7 +29,8 @@ module FWD_Control (
   input logic [4:0] ID_dest_rs2_ip, //Rt from decode stage
 
   output forward_mux_code fa_mux_op, //select lines for forwarding muxes (Rs)
-  output forward_mux_code fb_mux_op  //select lines for forwarding muxes (Rt)
+  output forward_mux_code fb_mux_op,  //select lines for forwarding muxes (Rt)
+  output logic fw_en_op //Ashan's change
 );
 
   logic EX_MEM_RegWrite_en;
@@ -53,7 +54,32 @@ module FWD_Control (
         * For Register Register instructions, what registers are relevant for you to check 
         
         */
+        //Ashan's change
+        if ((EX_MEM_RegWrite_en && (EX_MEM_dest_ip != 0)) && 
+        (EX_MEM_dest_ip == ID_dest_rs1_ip) ) begin
+          fa_mux_op = EX_RESULT_SELECT;
+          fw_en_op = 1'b1;
+        end
+        if ((EX_MEM_RegWrite_en && (EX_MEM_dest_ip != 0)) && 
+        (EX_MEM_dest_ip == ID_dest_rs2_ip) ) begin
+          fb_mux_op = EX_RESULT_SELECT;
+          fw_en_op = 1'b1;
+        end
 
+        if ((MEM_WB_RegWrite_en && MEM_WB_dest_ip != 0) && 
+        !((EX_MEM_RegWrite_en && (EX_MEM_dest_ip != 0)) && (EX_MEM_dest_ip == ID_dest_rs1_ip) ) && 
+        ( MEM_WB_dest_ip == ID_dest_rs1_ip) ) begin
+          fa_mux_op = MEM_RESULT_SELECT;
+         fw_en_op = 1'b1;
+        end
+
+        if ((MEM_WB_RegWrite_en && MEM_WB_dest_ip != 0) && !((EX_MEM_RegWrite_en && (EX_MEM_dest_ip != 0)) && 
+        (EX_MEM_dest_ip == ID_dest_rs2_ip) ) && 
+        ( MEM_WB_dest_ip == ID_dest_rs2_ip) ) begin
+          fb_mux_op = MEM_RESULT_SELECT;
+         fw_en_op = 1'b1;
+        end
+        //Ashan's change
       end
 
       OPCODE_OPIMM: begin // Register Immediate 
@@ -64,6 +90,18 @@ module FWD_Control (
         * Here you will need to check for hazards and decide if and what you will forward 
         * For Register Register instructions, what registers are relevant for you to check
         */
+         if ((EX_MEM_RegWrite_en && (EX_MEM_dest_ip != 0)) && 
+        (EX_MEM_dest_ip == ID_dest_rs1_ip) ) begin
+          fa_mux_op = EX_RESULT_SELECT;
+         fw_en_op = 1'b1;
+        end
+
+        if ((MEM_WB_RegWrite_en && MEM_WB_dest_ip != 0) && 
+        !((EX_MEM_RegWrite_en && (EX_MEM_dest_ip != 0)) && (EX_MEM_dest_ip == ID_dest_rs1_ip) ) && 
+        ( MEM_WB_dest_ip == ID_dest_rs1_ip) ) begin
+          fa_mux_op = MEM_RESULT_SELECT;
+          fw_en_op = 1'b1;
+        end
 
       end
 

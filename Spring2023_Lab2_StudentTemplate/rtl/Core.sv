@@ -117,6 +117,11 @@ module Core (
 		.pc_mux_ip(pc_mux_select),
 		.stall_ip(stall),
 
+		//Ashan's change
+		//Inputs from fwd_controller
+		.fw_en_ip(fw_en),
+		//Ashan's change
+
 		// Inputs from EX of possible new PC 
 		.alu_result_ip(alu_next_pc_addr),
 		.alu_result_valid_ip(alu_next_pc_addr_valid),
@@ -189,7 +194,8 @@ module Core (
 
 		// Outputs to Execute Unit
 		.fa_mux_op(FA), //select lines for forwarding muxes (Rs)
-		.fb_mux_op(FB)  //select lines for forwarding muxes (Rt)
+		.fb_mux_op(FB),  //select lines for forwarding muxes (Rt)
+		.fw_en_op(fw_en) //Ashan's change
 	);
 
 	EX_Stage InstructionExecute_Module (
@@ -206,6 +212,7 @@ module Core (
 		.fa_mux_ip(FA),
 		.fb_mux_ip(FB),
 		.fw_wb_data(writeback_data),
+		
 
 		// Pass-Through Signals to Memory
 		.lsu_enable_pt_ip(id_lsu_en_pt),

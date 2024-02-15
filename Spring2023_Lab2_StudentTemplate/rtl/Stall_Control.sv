@@ -35,7 +35,7 @@ module Stall_Control (
 
   // The opcode of the current instr. in ID/EX
   input [6:0] EX_instr_opcode_ip,
-
+  input logic fw_en_ip, //Ashan's change
   output logic stall_op
 );
 
@@ -67,13 +67,13 @@ module Stall_Control (
         // end
 
         if (ID_src1_addr_ip != 0 || ID_src2_addr_ip !=0) begin
-          if ((EX_reg_dest_ip == ID_src1_addr_ip)  && (EX_instr_opcode_ip == 7'b0000011) ||
+          if (((EX_reg_dest_ip == ID_src1_addr_ip)  && (EX_instr_opcode_ip == 7'b0000011) ||
           ((LSU_reg_dest_ip == ID_src1_addr_ip) && (EX_instr_opcode_ip == 7'b0110011))||
           ((WB_reg_dest_ip == ID_src1_addr_ip) && (WB_write_reg_en_ip == 1'b1)) ||
           ((EX_reg_dest_ip == ID_src2_addr_ip) && (EX_instr_opcode_ip == 7'b0110011))||
           ((LSU_reg_dest_ip == ID_src2_addr_ip) && (EX_instr_opcode_ip == 7'b0000011))||
           ((WB_reg_dest_ip == ID_src2_addr_ip) && (WB_write_reg_en_ip == 1'b1))
-           ) begin
+           ) && (fw_en_ip == 1'b0)) begin
             stall_op = 1'b1;
           end
         end
@@ -95,10 +95,10 @@ module Stall_Control (
         */
         //Ashan's change
         if (ID_src1_addr_ip != 0) begin
-          if ((EX_reg_dest_ip == ID_src1_addr_ip)  && (EX_instr_opcode_ip == 7'b0000011 ) ||
+          if (((EX_reg_dest_ip == ID_src1_addr_ip)  && (EX_instr_opcode_ip == 7'b0000011 ) ||
           ((LSU_reg_dest_ip == ID_src1_addr_ip) && (EX_instr_opcode_ip == 7'b0010011))||
           ((WB_reg_dest_ip == ID_src1_addr_ip) && (WB_write_reg_en_ip == 1'b1)) 
-           ) begin
+           )&& (fw_en_ip == 1'b0)) begin
             stall_op = 1'b1;
           end
         end
