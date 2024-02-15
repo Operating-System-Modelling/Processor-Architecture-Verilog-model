@@ -51,6 +51,7 @@ module FWD_Control (
         * 
         * Here you will need to check for hazards and decide if and what you will forward 
         * For Register Register instructions, what registers are relevant for you to check 
+        
         */
 
       end
