@@ -56,9 +56,13 @@ module IF_Stage (
 		* Task 1
 		* How should you check the stall signal and what should you assign the Next PC address? 
 		*/
-
+		
     if (reset == 1'b1) 
       Next_PC = 0;
+	  //Ashan's change 
+	else  if (stall_ip == 1'b1) 
+		Next_PC = pc_addr;
+	  //Ashan's change
     else begin
       unique case (pc_mux_ip)
         NEXTPC: Next_PC = pc_addr + 4;

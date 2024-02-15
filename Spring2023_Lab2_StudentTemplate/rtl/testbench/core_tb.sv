@@ -45,23 +45,118 @@ module Core_tb;
 
 		#1 
 
+		/* Test 1
+	// NOP 
+	core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[0] = 8'h00;
+    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[1] = 8'h00;
+    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[2] = 8'h00;
+    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[3] = 8'h00;
+
+    // // add x5, x5, x2
+	// core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[4] = 8'h00;
+    // core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[5] = 8'h22;
+    // core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[6] = 8'h82;
+    // core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[7] = 8'hb3;
+
+    // // sub x4, x12, x7
+	// core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[8] = 8'h40;
+    // core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[9] = 8'h76;
+    // core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[10] = 8'h02;
+    // core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[11] = 8'h33;
+	*/
+
+/* // Functional 
     // NOP 
 		core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[0] = 8'h00;
     core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[1] = 8'h00;
     core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[2] = 8'h00;
     core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[3] = 8'h00;
 
-    // add x5, x5, x2
+	// NOP 
 		core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[4] = 8'h00;
-    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[5] = 8'h22;
-    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[6] = 8'h82;
-    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[7] = 8'hb3;
+    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[5] = 8'h00;
+    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[6] = 8'h00;
+    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[7] = 8'h00;
 
-    // sub x4, x12, x7
-		core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[8] = 8'h40;
-    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[9] = 8'h76;
-    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[10] = 8'h02;
-    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[11] = 8'h33;
+	// NOP 
+	core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[8] = 8'h00;
+    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[9] = 8'h00;
+    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[10] = 8'h00;
+    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[11] = 8'h00;
+
+	//addi x9, x2, -20
+	core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[12] = 8'hfe;
+    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[13] = 8'hc1;
+    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[14] = 8'h04;
+    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[15] = 8'h93;
+
+	//add x10, x11, x12
+	core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[16] = 8'h00;
+    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[17] = 8'hc5;
+    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[18] = 8'h85;
+    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[19] = 8'h33;
+
+	//lw x8, 0(x0)
+	core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[20] = 8'h00;
+    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[21] = 8'h00;
+    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[22] = 8'h24;
+    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[23] = 8'h03;
+
+	//sub x20, x3, x6
+	core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[24] = 8'h40;
+    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[25] = 8'h61;
+    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[26] = 8'h8a;
+    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[27] = 8'h33;
+
+	//slt x21, x18, x19
+	core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[28] = 8'h01;
+    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[29] = 8'h39;
+    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[30] = 8'h2a;
+    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[31] = 8'hb3;
+
+	//jal x11, 20
+	core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[32] = 8'h01;
+    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[33] = 8'h40;
+    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[34] = 8'h05;
+    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[35] = 8'hef;
+
+	*/
+	// core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[36] = 8'h40;
+    // core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[37] = 8'h76;
+    // core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[38] = 8'h02;
+    // core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[39] = 8'h33;
+
+	// NOP 
+		core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[0] = 8'h00;
+    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[1] = 8'h00;
+    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[2] = 8'h00;
+    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[3] = 8'h00;
+
+	// lw x9, 0(x0) 
+		core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[4] = 8'h00;
+    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[5] = 8'h00;
+    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[6] = 8'h24;
+    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[7] = 8'h83;
+
+	// add x1, x9, x2
+	core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[8] = 8'h00;
+    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[9] = 8'h24;
+    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[10] = 8'h80;
+    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[11] = 8'hb3;
+
+	//lw x8, 4(x0)
+	core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[12] = 8'h00;
+    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[13] = 8'h40;
+    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[14] = 8'h24;
+    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[15] = 8'h03;
+
+	//add x3, x8, x6
+	core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[16] = 8'h00;
+    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[17] = 8'h64;
+    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[18] = 8'h01;
+    core_proc.InstructionFetch_Module.InstructionMemory.instr_RAM[19] = 8'hb3;
+
+	
 
 		#6 reset = 1'b0;
 
