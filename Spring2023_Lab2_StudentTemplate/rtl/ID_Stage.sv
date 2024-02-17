@@ -32,6 +32,8 @@ module ID_Stage (
   input logic [31:0] wb_data_ip,
   input logic wb_data_valid_ip,
 
+  input logic flush_ip,
+
   // Outputs to ALU
   output logic alu_en_op,
   output alu_opcode_e alu_operator_op,        // Selects the ALU operation to perform
@@ -61,7 +63,8 @@ module ID_Stage (
   output pc_mux pc_mux_op,
 
   // Stall signal to send to Fetch
-  output logic stall_op
+  output logic stall_op,
+  input logic fw_en_ip
 );
 
   // Declare parameters to extract source and destination registers and immediate values
@@ -234,7 +237,7 @@ module ID_Stage (
 
   // ID_EX Pipeline Buffer
   always_ff @(posedge clock) begin
-    if ((stall_op == 1'b1) | (reset == 1'b1)) begin
+    if ((stall_op == 1'b1) | (reset == 1'b1) | (flush_ip == 1'b1)) begin
       // Instructions to send to EX Stage
       alu_en_op <= 0;
       alu_operator_op <= ALU_NOP;
@@ -323,7 +326,8 @@ module ID_Stage (
 		// The opcode of the current instr. in ID/EX
 		.EX_instr_opcode_ip(EX_instruction_opcode),
 
-		.stall_op(stall_op)
+		.stall_op(stall_op), 
+    .fw_en_ip(fw_en_ip)//Ashan's change - send forwarding signal to stall controller
 	);
 
 endmodule

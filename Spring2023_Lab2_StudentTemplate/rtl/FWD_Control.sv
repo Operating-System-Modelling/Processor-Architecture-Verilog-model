@@ -28,6 +28,8 @@ module FWD_Control (
   input logic [4:0] ID_dest_rs1_ip, //Rs from decode stage
   input logic [4:0] ID_dest_rs2_ip, //Rt from decode stage
 
+  output logic fw_en_op,//Ashan's change
+
   output forward_mux_code fa_mux_op, //select lines for forwarding muxes (Rs)
   output forward_mux_code fb_mux_op  //select lines for forwarding muxes (Rt)
 );
@@ -41,7 +43,7 @@ module FWD_Control (
   always @(*) begin
     fa_mux_op = ORIGINAL_SELECT;
     fb_mux_op = ORIGINAL_SELECT;
-
+    fw_en_op = 1'b0;
     case (id_instr_opcode_ip)
 
       OPCODE_OP: begin // Register-Register ALU operation
@@ -51,9 +53,32 @@ module FWD_Control (
         * 
         * Here you will need to check for hazards and decide if and what you will forward 
         * For Register Register instructions, what registers are relevant for you to check 
-        
+        check if there is a execution or memory hazard (individually, not together, if together prioritize execution hazard)
         */
+        if (( (EX_MEM_RegWrite_en == 1) && (EX_MEM_dest_ip != 0)) && 
+        (EX_MEM_dest_ip == ID_dest_rs1_ip) ) begin
+          fa_mux_op = EX_RESULT_SELECT;
+          fw_en_op = 1'b1;
+        end
+        if (( (EX_MEM_RegWrite_en == 1) && (EX_MEM_dest_ip != 0)) && 
+        (EX_MEM_dest_ip == ID_dest_rs2_ip) ) begin
+          fb_mux_op = EX_RESULT_SELECT;
+          fw_en_op = 1'b1;
+        end
 
+        if (((MEM_WB_RegWrite_en == 1) && MEM_WB_dest_ip != 0) && 
+        !((   (EX_MEM_RegWrite_en == 1) && (EX_MEM_dest_ip != 0)) && (EX_MEM_dest_ip == ID_dest_rs1_ip) ) && 
+        ( MEM_WB_dest_ip == ID_dest_rs1_ip) ) begin
+          fa_mux_op = MEM_RESULT_SELECT;
+         fw_en_op = 1'b1;
+        end
+
+        if ((MEM_WB_RegWrite_en == 1 && MEM_WB_dest_ip != 0) && !((EX_MEM_RegWrite_en == 1 && (EX_MEM_dest_ip != 0)) && 
+        (EX_MEM_dest_ip == ID_dest_rs2_ip) ) && 
+        ( MEM_WB_dest_ip == ID_dest_rs2_ip) ) begin
+          fb_mux_op = MEM_RESULT_SELECT;
+         fw_en_op = 1'b1;
+        end
       end
 
       OPCODE_OPIMM: begin // Register Immediate 
@@ -63,8 +88,20 @@ module FWD_Control (
         * 
         * Here you will need to check for hazards and decide if and what you will forward 
         * For Register Register instructions, what registers are relevant for you to check
+        check if there is a execution or memory hazard (individually, not together, if together prioritize execution hazard)
         */
+        if ((EX_MEM_RegWrite_en == 1 && (EX_MEM_dest_ip != 0)) && 
+        (EX_MEM_dest_ip == ID_dest_rs1_ip) ) begin
+          fa_mux_op = EX_RESULT_SELECT;
+         fw_en_op = 1'b1;
+        end
 
+        if ((MEM_WB_RegWrite_en == 1 && MEM_WB_dest_ip != 0) && 
+        !((EX_MEM_RegWrite_en == 1 && (EX_MEM_dest_ip != 0)) && (EX_MEM_dest_ip == ID_dest_rs1_ip) ) && 
+        ( MEM_WB_dest_ip == ID_dest_rs1_ip) ) begin
+          fa_mux_op = MEM_RESULT_SELECT;
+          fw_en_op = 1'b1;
+        end
       end
 
     endcase

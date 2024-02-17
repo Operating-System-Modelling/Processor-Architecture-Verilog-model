@@ -57,6 +57,8 @@ module EX_Stage (
   output logic [31:0] next_PC_addr_op,
   output logic next_PC_addr_valid_op,
 
+  output logic flush_op, //Ashan's change
+
   // Pass Through the WriteBack Mux Signal
   output write_back_mux_selector ex_wb_mux_op,
   output logic [31:0] ex_pc_addr_pt_op,
@@ -73,11 +75,12 @@ module EX_Stage (
   always @(*) begin
     next_PC_addr_valid_op = 0;
     next_PC_addr_op = 0;
-//set flush signal - Ashan
+    flush_op = 0; // Ashan's Change - initializing flush_op to 0
     case (pc_mux_ip) 
       ALU_RESULT: begin
         next_PC_addr_valid_op = alu_valid;
         next_PC_addr_op = alu_result;
+        flush_op = 1; //Ashan's change - enabling flush as JAL detected
       end
       default begin
         next_PC_addr_valid_op = 0;
@@ -114,7 +117,9 @@ module EX_Stage (
       *
       */
       //Ashan's change
-      EX_RESULT_SELECT: alu_operand_a = alu_result;
+      //Forward if execute hazard detected from ALU
+      EX_RESULT_SELECT: alu_operand_a = alu_result_op;
+      //Forward if memory hazard detected from LSU 
       MEM_RESULT_SELECT: alu_operand_a = fw_wb_data;
       //Ashan's change
       default:  alu_operand_a = alu_operand_a_ip;
@@ -129,7 +134,9 @@ module EX_Stage (
       * Based on the Foward B Mux, how do we select the appropriate values? 
       *do the same for alu_operand b
       */
-      EX_RESULT_SELECT: alu_operand_b = alu_result;
+      //Forward if execute hazard detected from ALU
+      EX_RESULT_SELECT: alu_operand_b = alu_result_op;
+      //Forward if memory hazard detected from LSU 
       MEM_RESULT_SELECT: alu_operand_b = fw_wb_data;
       default: alu_operand_b = alu_operand_b_ip;
     endcase

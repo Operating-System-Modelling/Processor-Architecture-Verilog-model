@@ -36,6 +36,8 @@ module IF_Stage (
   input logic [31:0] alu_result_ip,
 	input logic alu_result_valid_ip,
 
+	input logic flush_ip,
+
   // Outputs to DECODE
   output logic instr_valid_op,              // Addr. signal sent is valid
   output logic [31:0] instr_data_op,      // Addr. containing the instruction in memory to fetch
@@ -60,8 +62,8 @@ module IF_Stage (
     if (reset == 1'b1) 
       Next_PC = 0;
 	  //Ashan's change 
-	else  if (stall_ip == 1'b1) 
-		Next_PC = pc_addr;
+	else  if (stall_ip == 1'b1 && flush_ip == 0) 
+		Next_PC = pc_addr; //stall current instuction in IF_Stage, but if a flush is not required
 	  //Ashan's change
     else begin
       unique case (pc_mux_ip)
@@ -81,10 +83,15 @@ module IF_Stage (
 			instr_data_op <= 0;
 			instr_pc_addr_op <= 0;
 		end
-		else if (stall_ip == 1'b1) begin 
+		else if (stall_ip == 1'b1 && flush_ip == 1'b0) begin 
 			instr_pc_addr_op <= instr_pc_addr_op;
 			instr_valid_op <= instr_valid_op;
 			instr_data_op <= instr_data_op;
+		end
+		else if (flush_ip == 1'b1) begin
+			instr_valid_op <= 0;
+			instr_data_op <= 0;
+			instr_pc_addr_op <= instr_pc_addr_op;
 		end
 		else begin
 			instr_pc_addr_op <= pc_addr;

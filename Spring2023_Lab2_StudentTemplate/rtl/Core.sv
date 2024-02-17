@@ -105,6 +105,8 @@ module Core (
 
 	// Stall signal propogated to relevant modules
 	logic stall;
+	logic fw_en; //Ashan's change - foward enabling instruction to notify stall to not stall
+	logic flush_en; // Ashan's change - notifying the decoder to flush the pipeline
 
 	IF_Stage InstructionFetch_Module (
 		// General Inputs
@@ -124,7 +126,8 @@ module Core (
 		// Outputs to Decode
 		.instr_valid_op(instr_mem_valid),
 		.instr_data_op(instr_mem_data),
-		.instr_pc_addr_op(if_instr_pc_addr)
+		.instr_pc_addr_op(if_instr_pc_addr),
+		.flush_ip(flush_en) //Ashan's change - notifying the Instruction Fetch to stall the  current instruction
 	);
 
 	ID_Stage InstructionDecode_Module (
@@ -170,7 +173,9 @@ module Core (
 		.pc_branch_offset_op(pc_branch_offset),
 		.pc_mux_op(pc_mux_select),
 
-		.stall_op(stall)
+		.stall_op(stall),
+		.flush_ip(flush_en),// Ashan's change - notify decode to flush the pipeline
+		.fw_en_ip(fw_en) //Ashan's change - foward enabling instruction to notify stall to not stall
 	);
 
 	FWD_Control ForwardController_Module (
@@ -188,6 +193,7 @@ module Core (
 		.ID_dest_rs2_ip(fwd_src2_reg_addr), // Rt from decode stage
 
 		// Outputs to Execute Unit
+		.fw_en_op(fw_en), //Ashan's change - output forwarding status
 		.fa_mux_op(FA), //select lines for forwarding muxes (Rs)
 		.fb_mux_op(FB)  //select lines for forwarding muxes (Rt)
 	);
@@ -237,7 +243,8 @@ module Core (
 
 		.ex_wb_mux_op(ex_wb_mux_pt),
 		.ex_pc_addr_pt_op(ex_instr_pc_addr_pt),
-		.ex_uimmd_pt_op(ex_uimmd_pt)
+		.ex_uimmd_pt_op(ex_uimmd_pt),
+		.flush_op(flush_en) // Ashan's change - output flush statis depending on a JAL through ALU-RESULT
 	);
 
 

@@ -35,7 +35,8 @@ module Stall_Control (
 
   // The opcode of the current instr. in ID/EX
   input [6:0] EX_instr_opcode_ip,
-
+  
+  input logic fw_en_ip, //Ashan's change - forwarding enable signal
   output logic stall_op
 );
 
@@ -56,26 +57,23 @@ module Stall_Control (
         */
 
         //Ashan's change
-        // if (ID_src1_addr_ip != 0 && ID_src2_addr_ip !=0) begin
-        //   if ((EX_instr_opcode_ip == 7'b0000011 && ((EX_reg_dest_ip == ID_src1_addr_ip) ||
-        //   (EX_reg_dest_ip  == ID_src2_addr_ip)))||
-        //   (((WB_reg_dest_ip == ID_src1_addr_ip && LSU_reg_dest_ip != ID_src1_addr_ip) ||
-        //   (WB_reg_dest_ip == ID_src2_addr_ip && LSU_reg != ID_src2_addr_ip))) &&
-        //   (fw_en_ip == 1'b0)) begin
-        //     stall_op = 1'b1;
-        //   end
-        // end
+        // Checks if there is no forwarding involved, then that at either rs1 or rs2 is not zero
+        //It then checks if it is a load instruction, if current instruction is needing a register  rs1 or rs2 then stall
+        // if instruction needs a value from write back stall, if needed from memory it is forwarded
+        if(fw_en_ip == 1'b0) begin
+        if (ID_src1_addr_ip !=0 && ID_src2_addr_ip !=0) begin
+          if (((EX_instr_opcode_ip == 7'b0000011) && ((EX_reg_dest_ip == ID_src1_addr_ip) || (EX_reg_dest_ip == ID_src2_addr_ip))) ||
 
-        if (ID_src1_addr_ip != 0 || ID_src2_addr_ip !=0) begin
-          if ((EX_reg_dest_ip == ID_src1_addr_ip)  && (EX_instr_opcode_ip == 7'b0000011) ||
-          ((LSU_reg_dest_ip == ID_src1_addr_ip) && (EX_instr_opcode_ip == 7'b0110011))||
-          ((WB_reg_dest_ip == ID_src1_addr_ip) && (WB_write_reg_en_ip == 1'b1)) ||
-          ((EX_reg_dest_ip == ID_src2_addr_ip) && (EX_instr_opcode_ip == 7'b0110011))||
-          ((LSU_reg_dest_ip == ID_src2_addr_ip) && (EX_instr_opcode_ip == 7'b0000011))||
-          ((WB_reg_dest_ip == ID_src2_addr_ip) && (WB_write_reg_en_ip == 1'b1))
+
+          (!((LSU_reg_dest_ip == ID_src1_addr_ip) )&&
+          ((WB_reg_dest_ip == ID_src1_addr_ip) )) ||
+
+          (((LSU_reg_dest_ip != ID_src2_addr_ip)) &&
+          ((WB_reg_dest_ip == ID_src2_addr_ip) && (WB_write_reg_en_ip == 1'b1)))  
            ) begin
             stall_op = 1'b1;
           end
+        end
         end
 
         //Ashan's change
@@ -94,13 +92,19 @@ module Stall_Control (
         * For Register Immedite instructions, what registers are relevant
         */
         //Ashan's change
+        // Checks if there is no forwarding involved, then that at either rs1 is not zero
+        //It then checks if it is a load instruction, if current instruction is needing a register  rs1  then stall
+        // if instruction needs a value from write back stall, if needed from memory it is forwarded
+        if(fw_en_ip == 1'b0) begin
         if (ID_src1_addr_ip != 0) begin
-          if ((EX_reg_dest_ip == ID_src1_addr_ip)  && (EX_instr_opcode_ip == 7'b0000011 ) ||
-          ((LSU_reg_dest_ip == ID_src1_addr_ip) && (EX_instr_opcode_ip == 7'b0010011))||
-          ((WB_reg_dest_ip == ID_src1_addr_ip) && (WB_write_reg_en_ip == 1'b1)) 
+          if (((EX_reg_dest_ip == ID_src1_addr_ip)  && (EX_instr_opcode_ip == 7'b0000011 )) ||
+
+          (((LSU_reg_dest_ip != ID_src1_addr_ip))&&
+          ((WB_reg_dest_ip == ID_src1_addr_ip) && (WB_write_reg_en_ip == 1'b1)))    
            ) begin
             stall_op = 1'b1;
           end
+        end
         end
         //Ashan's change
 
